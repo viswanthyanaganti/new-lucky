@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register for Lucky Prize Draw</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .back-link a {
+            color: #2196F3;
+            text-decoration: none;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-bottom: 5px;
+        }
+
+        .back-link a:hover {
+            background-color: #e3f2fd;
+        }
+
+        .admin-login-btn {
+            color: #2196F3;
+            text-decoration: none;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s;
+            background-color: #e3f2fd;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .admin-login-btn:hover {
+            background-color: #bbdefb;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Register for Lucky Prize Draw</h1>
+        
+        <div class="registration-form">
+            <form id="registrationForm" action="/post" method="post">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}" title="Please enter a valid 10-digit phone number">
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" required min="18" max="100">
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select id="gender" name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="insta_link">Instagram Profile Link:</label>
+                    <input type="url" id="insta_link" name="insta_link" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="followers">Instagram Followers Count:</label>
+                    <input type="number" id="followers" name="followers" min="0" required>
+                </div>
+
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <div class="back-link">
+            <a href="users.html">
+                <i class="fas fa-users"></i> Registered Users
+            </a>
+        </div>
+        <a href="login.html" class="admin-login-btn" title="Admin Login">
+            <i class="fas fa-user-shield"></i>
+        </a>
+    </div>
+
+    <!-- Custom Popup -->
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup" id="popup">
+            <div class="popup-content">
+                <div class="popup-icon" id="popupIcon">
+                    <!-- Icon will be inserted here by JavaScript -->
+                </div>
+                <div class="popup-message" id="popupMessage">
+                    <!-- Message will be inserted here by JavaScript -->
+                </div>
+                <button class="popup-close" id="popupClose">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(message, isSuccess = true) {
+            const overlay = document.getElementById('popupOverlay');
+            const popup = document.getElementById('popup');
+            const icon = document.getElementById('popupIcon');
+            const messageEl = document.getElementById('popupMessage');
+            
+            // Set icon and message
+            if (isSuccess) {
+                icon.innerHTML = '<i class="fas fa-check-circle success"></i>';
+            } else {
+                icon.innerHTML = '<img src="images/warning.jpg" style="width: 100px; height: 100px;" alt="Warning">';
+            }
+            messageEl.textContent = message;
+            
+            // Set popup type
+            popup.className = 'popup' + (isSuccess ? '' : ' error');
+            
+            // Show popup
+            overlay.style.display = 'flex';
+            
+            // Add click event to close button
+            document.getElementById('popupClose').onclick = () => {
+                overlay.style.display = 'none';
+                if (isSuccess) {
+                    // Redirect to users page after successful registration
+                    window.location.href = 'users.html';
+                }
+            };
+            
+            // Close on overlay click
+            overlay.onclick = (e) => {
+                if (e.target === overlay) {
+                    overlay.style.display = 'none';
+                    if (isSuccess) {
+                        // Redirect to users page after successful registration
+                        window.location.href = '/';
+                    }
+                }
+            };
+
+            // Auto redirect after 2 seconds if success
+            if (isSuccess) {
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            }
+        }
+
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    showPopup(result.message, true);
+                } else {
+                    showPopup(result.message || 'Registration failed', false);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('An error occurred. Please try again later.', false);
+            }
+        });
+    </script>
+</body>
+</html> 

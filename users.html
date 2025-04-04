@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Prize Draw - Registered Users</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .users-grid {
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            margin: 1px auto;
+            padding: 0 20px;
+            gap: 15px;
+        }
+
+        .total-users {
+            padding: 12px 24px;
+            background-color: #e8f5e9;
+            border-radius: 8px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-login-btn {
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-login-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .refresh-btn {
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .refresh-btn:hover {
+            background-color: #45a049;
+        }
+
+        .refresh-btn i {
+            font-size: 16px;
+        }
+
+        .users-list {
+            background: #f8f8f8;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .user-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .user-info {
+            flex-grow: 1;
+            margin: 0 15px;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-details {
+            color: #666;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .user-email {
+            color: #666;
+        }
+
+        .user-time {
+            color: #888;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .user-rank {
+            background: #4CAF50;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-followers {
+            background: #f5f5f5;
+            padding: 5px 10px;
+            border-radius: 15px;
+            color: #666;
+            font-size: 14px;
+            min-width: 120px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .no-users {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .admin-section {
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: none; /* Hidden by default */
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .admin-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .reset-btn {
+            padding: 12px 25px;
+            background-color: #e91e63;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .reset-btn:hover {
+            background-color: #d81b60;
+        }
+
+        .reset-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .draw-btn {
+            padding: 12px 25px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .draw-btn:hover {
+            background-color: #f57c00;
+        }
+
+        .draw-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .winners-section {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3e0;
+            border-radius: 10px;
+        }
+
+        .winners-section-4to10 {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .winners-title {
+            text-align: center;
+            color: #f57c00;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .winners-title-4to10 {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .winners-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .winners-grid-4to10 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 10px;
+        }
+
+        .winner-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 200px;
+        }
+
+        .winner-card-4to10 {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .winner-card-4to10:hover {
+            transform: translateY(-2px);
+        }
+
+        .winner-position {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #f57c00;
+        }
+
+        .winner-position-4to10 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #666;
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .winner-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .winner-name-4to10 {
+            font-size: 16px;
+            color: #444;
+            margin-bottom: 4px;
+        }
+
+        .winner-email {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .winner-email-4to10 {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .winner-followers {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .winner-followers-4to10 {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .user-card.winner {
+            border: 2px solid #ff9800;
+            background: #fff3e0;
+        }
+
+        .winner-badge {
+            background: #ff9800;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .winner-followers{
+            padding-top: 5px;
+        }
+
+        .fix-winners-btn {
+            padding: 12px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .fix-winners-btn:hover {
+            background-color: #45a049;
+        }
+
+        .fix-winners-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .fix-winners-btn i {
+            font-size: 16px;
+        }
+
+        .winner-select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            margin: 5px;
+            min-width: 200px;
+        }
+
+        .winner-select-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .winner-select-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .winner-select-label {
+            min-width: 100px;
+            font-weight: 500;
+        }
+
+        .draw-winners-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .draw-winners-btn.show {
+            display: flex;
+        }
+
+        .draw-winners-btn i {
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Add styles for the winner announcement popup */
+        .winner-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .winner-popup-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .winner-popup h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .winner-popup p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .winner-popup-btn {
+            padding: 12px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .winner-popup-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add winner announcement popup -->
+    <div class="winner-popup" id="winnerPopup">
+        <div class="winner-popup-content">
+            <h2>🎉 Winners Declared! 🎉</h2>
+            <p>Congratulations to all the winners! The current draw has been completed. Register again for new draw</p>
+            <a href="/register" class="winner-popup-btn">
+                <i class="fas fa-user-plus"></i> Register for Next Draw
+            </a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Lucky Prize Draw - Registered Users</h1>
+
+        <!-- Admin Section -->
+        <div class="admin-section" id="adminSection">
+            <div class="admin-header">
+                <h2>Admin Controls</h2>
+                <div class="admin-buttons">
+                    <button class="fix-winners-btn" onclick="fixWinners()" id="fixWinnersBtn">
+                        <i class="fas fa-trophy"></i> Draw Winners
+                    </button>
+                </div>
+            </div>
+
+            <!-- Fix Winners Modal -->
+            <div id="fixWinnersModal" style="display: none; margin-top: 20px; padding: 20px; background: #f8f8f8; border-radius: 8px;">
+                <h3>Fix Top 3 Winners</h3>
+                <div class="winner-select-container">
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">1st Place:</span>
+                        <select class="winner-select" id="firstPlaceSelect"></select>
+                    </div>
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">2nd Place:</span>
+                        <select class="winner-select" id="secondPlaceSelect"></select>
+                    </div>
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">3rd Place:</span>
+                        <select class="winner-select" id="thirdPlaceSelect"></select>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 20px;">Fix 4th to 10th Place Winners</h3>
+                <div class="winner-select-container">
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">4th Place:</span>
+                        <select class="winner-select" id="fourthPlaceSelect"></select>
+                    </div>
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">5th Place:</span>
+                        <select class="winner-select" id="fifthPlaceSelect"></select>
+                    </div>
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">6th Place:</span>
+                        <select class="winner-select" id="sixthPlaceSelect"></select>
+                    </div>
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">7th Place:</span>
+                        <select class="winner-select" id="seventhPlaceSelect"></select>
+                    </div>
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">8th Place:</span>
+                        <select class="winner-select" id="eighthPlaceSelect"></select>
+                    </div>
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">9th Place:</span>
+                        <select class="winner-select" id="ninthPlaceSelect"></select>
+                    </div>
+                    <div class="winner-select-row">
+                        <span class="winner-select-label">10th Place:</span>
+                        <select class="winner-select" id="tenthPlaceSelect"></select>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="fix-winners-btn" onclick="fixWinners()" id="confirmFixBtn">
+                        <i class="fas fa-check"></i> Confirm All Winners
+                    </button>
+                    <button class="reset-btn" onclick="hideFixWinnersModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <div class="total-users">
+                Total Registered Users: <span id="totalCount">0</span>
+            </div>
+            <!--<button class="refresh-btn" onclick="loadUsers()">
+                <i class="fas fa-sync-alt"></i> Refresh Users
+            </button>-->
+        </div>
+
+        <!-- Winners Section (moved outside admin section) -->
+        <div class="winners-section" id="winnersSection">
+            <h2 class="winners-title">🎉 Top 3 Winners! 🎉</h2>
+            <div class="winners-grid" id="winnersGrid">
+                <!-- Winners will be displayed here -->
+            </div>
+        </div>
+
+        <!-- 4th to 10th Place Winners Section -->
+        <div class="winners-section-4to10" id="winnersSection4to10">
+            <h2 class="winners-title-4to10">🏆 4th to 10th Place Winners</h2>
+            <div class="winners-grid-4to10" id="winnersGrid4to10">
+                <!-- 4th to 10th place winners will be displayed here -->
+            </div>
+        </div>
+        
+
+        <div class="users-grid">
+            <div class="users-list" id="usersList">
+                <!-- Users will be inserted here -->
+                <div class="no-users">Loading users...</div>
+            </div>
+        </div>
+    </div>
+
+    <!--<button class="draw-winners-btn" onclick="drawWinners()" title="Draw Winners">
+        <i class="fas fa-trophy"></i>
+    </button>-->
+
+    <script>
+        let ws;
+        let allUsers = []; // Store all users globally
+        let isFirstDraw = true; // Add this variable at the top with other global variables
+        
+        function connectWebSocket() {
+            ws = new WebSocket(`ws://${window.location.host}`);
+            
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.type === 'users_update') {
+                    updateUsersList(data.users, data.totalCount);
+                }
+            };
+
+            ws.onclose = function() {
+                // Attempt to reconnect after 5 seconds
+                setTimeout(connectWebSocket, 5000);
+            };
+        }
+
+        function updateUsersList(users, totalCount) {
+            // Store all users globally
+            allUsers = users;
+            
+            // Update total user count
+            document.getElementById('totalCount').textContent = totalCount;
+            const usersList = document.getElementById('usersList');
+            
+            // Update the winner selection dropdowns
+            updateWinnerSelects();
+            
+            if (users.length === 0) {
+                usersList.innerHTML = '<div class="no-users">No users registered yet</div>';
+                return;
+            }
+            
+            // Check for winners and update winners sections
+            const winners = users.filter(user => user.isWinner);
+            const winnersSection = document.getElementById('winnersSection');
+            const winnersSection4to10 = document.getElementById('winnersSection4to10');
+            const winnersGrid = document.getElementById('winnersGrid');
+            const winnersGrid4to10 = document.getElementById('winnersGrid4to10');
+            
+            if (winners.length > 0) {
+                winnersSection.style.display = 'block';
+                winnersSection4to10.style.display = 'block';
+                
+                // Display top 3 winners
+                winnersGrid.innerHTML = winners
+                    .filter(winner => winner.winningPosition <= 3)
+                    .sort((a, b) => a.winningPosition - b.winningPosition)
+                    .map(winner => `
+                        <div class="winner-card ${getPositionClass(winner.winningPosition)}">
+                            <div class="winner-position">${getPositionText(winner.winningPosition)}</div>
+                            <div class="winner-name">${winner.name}</div>
+                            <div class="winner-email">${winner.email}</div>
+                            <div class="winner-followers">
+                                <i class="fas fa-users"></i> ${winner.followers.toLocaleString()}
+                            </div>
+                        </div>
+                    `).join('');
+                
+                // Display 4th to 10th place winners
+                winnersGrid4to10.innerHTML = winners
+                    .filter(winner => winner.winningPosition > 3 && winner.winningPosition <= 10)
+                    .sort((a, b) => a.winningPosition - b.winningPosition)
+                    .map(winner => `
+                        <div class="winner-card-4to10">
+                            <div class="winner-position-4to10">${winner.winningPosition}${getOrdinalSuffix(winner.winningPosition)} Place</div>
+                            <div class="winner-name-4to10">${winner.name}</div>
+                            <div class="winner-email-4to10">${winner.email}</div>
+                            <div class="winner-followers-4to10">
+                                <i class="fas fa-users"></i> ${winner.followers.toLocaleString()}
+                            </div>
+                        </div>
+                    `).join('');
+            } else {
+                winnersSection.style.display = 'none';
+                winnersSection4to10.style.display = 'none';
+            }
+            
+            // Filter out winners from the main users list
+            const nonWinners = users.filter(user => !user.isWinner);
+            
+            // Update users list with only non-winners
+            usersList.innerHTML = nonWinners.map((user, index) => `
+                <div class="user-card">
+                    <div class="user-rank">${index + 1}</div>
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-details">
+                            <div class="user-email">${user.email}</div>
+                            <div class="user-time">
+                                <i class="far fa-clock"></i>
+                                ${new Date(user.createdAt).toLocaleString()}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-followers">
+                        <i class="fas fa-users"></i>
+                        ${user.followers.toLocaleString()} followers
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateWinnerSelects() {
+            const selectIds = [
+                'firstPlaceSelect', 'secondPlaceSelect', 'thirdPlaceSelect',
+                'fourthPlaceSelect', 'fifthPlaceSelect', 'sixthPlaceSelect',
+                'seventhPlaceSelect', 'eighthPlaceSelect', 'ninthPlaceSelect',
+                'tenthPlaceSelect'
+            ];
+            
+            // Clear and initialize all select elements
+            selectIds.forEach((id, index) => {
+                const select = document.getElementById(id);
+                select.innerHTML = `<option value="">Select ${index + 1}${getOrdinalSuffix(index + 1)} Place</option>`;
+            });
+            
+            // Add users to all dropdowns
+            allUsers.forEach(user => {
+                if (!user._id) {
+                    console.error('User missing _id:', user);
+                    return;
+                }
+                const option = `<option value="${user._id}">${user.name} (${user.email})</option>`;
+                selectIds.forEach(id => {
+                    document.getElementById(id).innerHTML += option;
+                });
+            });
+            
+            // Set current winners if they exist
+            const winners = allUsers.filter(user => user.isWinner);
+            winners.forEach(winner => {
+                if (!winner._id) {
+                    console.error('Winner missing _id:', winner);
+                    return;
+                }
+                const selectId = selectIds[winner.winningPosition - 1];
+                if (selectId) {
+                    document.getElementById(selectId).value = winner._id;
+                }
+            });
+        }
+
+        function showFixWinnersModal() {
+            document.getElementById('fixWinnersModal').style.display = 'block';
+        }
+
+        function hideFixWinnersModal() {
+            document.getElementById('fixWinnersModal').style.display = 'none';
+        }
+
+        async function fixWinners() {
+            const fixBtn = document.getElementById('fixWinnersBtn');
+            fixBtn.disabled = true;
+            fixBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fixing...';
+
+            try {
+                const response = await fetch('/fix-winners', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    await loadUsers();
+                    if (isFirstDraw) {
+                        // First click - just update the UI
+                        isFirstDraw = false;
+                    } else {
+                        // Second click - show the popup
+                        document.getElementById('winnerPopup').style.display = 'flex';
+                    }
+                } else {
+                    alert(result.message || 'Error fixing winners. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error fixing winners:', error);
+                alert('Error fixing winners. Please try again.');
+            } finally {
+                fixBtn.disabled = false;
+                fixBtn.innerHTML = '<i class="fas fa-trophy"></i> Draw Winners';
+            }
+        }
+
+        // Initial load of users
+        async function loadUsers() {
+            try {
+                const response = await fetch('/users/data');
+                const data = await response.json();
+                updateUsersList(data.users, data.totalCount);
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        // Connect WebSocket when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            connectWebSocket();
+            loadUsers();
+        });
+
+        // Check if user is admin
+        async function checkAdminStatus() {
+            try {
+                const response = await fetch('/users/data');
+                if (response.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                const data = await response.json();
+                
+                // Show admin section if user is admin
+                if (data.isAdmin) {
+                    document.getElementById('adminSection').style.display = 'block';
+                    document.querySelector('.draw-winners-btn').classList.add('show');
+                }
+            } catch (error) {
+                console.error('Error checking admin status:', error);
+            }
+        }
+
+        async function drawWinners() {
+            const drawBtn = document.querySelector('.draw-winners-btn');
+            drawBtn.disabled = true;
+            drawBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+            try {
+                if (isFirstDraw) {
+                    // First click behavior - normal draw
+                    const response = await fetch('/draw-winners', {
+                        method: 'POST'
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        await loadUsers();
+                        document.getElementById('winnersSection').style.display = 'block';
+                        isFirstDraw = false; // Set to false after first successful draw
+                        location.reload();
+                    } else {
+                        alert(result.message);
+                    }
+                } else {
+                    // Second click behavior - reset and clear data
+                    const response = await fetch('/reset-and-clear', {
+                        method: 'POST'
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        alert('All winners have been reset and user data has been cleared. New registrations are required.');
+                        isFirstDraw = true; // Reset for next cycle
+                        location.reload();
+                    } else {
+                        alert(result.message || 'Error resetting and clearing data');
+                    }
+                }
+            } catch (error) {
+                console.error('Error in draw operation:', error);
+                alert('Error performing draw operation. Please try again.');
+            } finally {
+                drawBtn.disabled = false;
+                drawBtn.innerHTML = '<i class="fas fa-trophy"></i>';
+            }
+        }
+
+        async function resetWinners() {
+            const resetBtn = document.getElementById('resetBtn');
+            resetBtn.disabled = true;
+            resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+
+            try {
+                const response = await fetch('/reset-winners', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('winnersSection').style.display = 'none';
+                    await loadUsers(); // Reload the users list
+                    location.reload(); // Refresh the page
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error resetting winners:', error);
+                alert('Error resetting winners. Please try again.');
+            } finally {
+                resetBtn.disabled = false;
+                resetBtn.innerHTML = '<i class="fas fa-redo"></i> Reset Winners';
+            }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) {
+                const minutes = Math.floor(diff / 60000);
+                return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            }
+            if (diff < 86400000) {
+                const hours = Math.floor(diff / 3600000);
+                return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            }
+            if (diff < 604800000) {
+                const days = Math.floor(diff / 86400000);
+                return `${days} day${days > 1 ? 's' : ''} ago`;
+            }
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getPositionClass(position) {
+            const positions = ['first', 'second', 'third'];
+            return positions[position - 1] || '';
+        }
+
+        function getPositionText(position) {
+            const positions = ['1st', '2nd', '3rd'];
+            return positions[position - 1] || '';
+        }
+
+        function getOrdinalSuffix(n) {
+            const j = n % 10;
+            const k = n % 100;
+            if (j == 1 && k != 11) return "st";
+            if (j == 2 && k != 12) return "nd";
+            if (j == 3 && k != 13) return "rd";
+            return "th";
+        }
+
+        // Check if predefined winners are available
+        async function checkPredefinedWinners() {
+            try {
+                const response = await fetch('/check-predefined-winners');
+                const data = await response.json();
+                
+                const fixWinnersBtn = document.getElementById('fixWinnersBtn');
+                if (data.success && data.canFixWinners) {
+                    fixWinnersBtn.classList.add('show');
+                    fixWinnersBtn.title = 'All predefined winners are registered';
+                } else {
+                    fixWinnersBtn.classList.remove('show');
+                    fixWinnersBtn.title = 'Not all predefined winners are registered yet';
+                }
+            } catch (error) {
+                console.error('Error checking predefined winners:', error);
+            }
+        }
+
+        // Load users and check admin status when page loads
+        async function initialize() {
+            await loadUsers();
+            await checkAdminStatus();
+            if (document.getElementById('adminSection').style.display === 'block') {
+                await checkPredefinedWinners();
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initialize);
+
+        // Add refresh function
+        async function refreshPage() {
+            const refreshBtn = document.querySelector('.refresh-btn');
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+            
+            try {
+                await loadUsers();
+                if (document.getElementById('adminSection').style.display === 'block') {
+                    await checkPredefinedWinners();
+                }
+            } catch (error) {
+                console.error('Error refreshing page:', error);
+                alert('Error refreshing page. Please try again.');
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Page';
+            }
+        }
+
+        // Refresh the list every minute to update the "time ago" displays
+        setInterval(async () => {
+            await loadUsers();
+            if (document.getElementById('adminSection').style.display === 'block') {
+                await checkPredefinedWinners();
+            }
+        }, 60000);
+    </script>
+</body>
+</html> 
