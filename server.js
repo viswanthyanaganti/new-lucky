@@ -17,17 +17,54 @@ const clients = new Set();
 // WebSocket connection handling
 wss.on('connection', (ws) => {
     clients.add(ws);
+    console.log('New client connected. Total clients:', clients.size);
+    
+    // Send initial data to new client
+    if (ws.readyState === WebSocket.OPEN) {
+        User1.find({ isAdmin: false }, {
+            name: 1,
+            email: 1,
+            followers: 1,
+            createdAt: 1,
+            isWinner: 1,
+            winningPosition: 1,
+            _id: 1
+        }).sort({ createdAt: -1 }).then(users => {
+            const totalCount = users.length;
+            ws.send(JSON.stringify({
+                type: 'users_update',
+                users,
+                totalCount
+            }));
+        });
+    }
     
     ws.on('close', () => {
+        clients.delete(ws);
+        console.log('Client disconnected. Total clients:', clients.size);
+    });
+
+    ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
         clients.delete(ws);
     });
 });
 
 // Function to broadcast updates to all connected clients
-const broadcastUpdate = (data) => {
+const broadcastUpdate = async (data) => {
+    console.log('Broadcasting update to', clients.size, 'clients');
+    const message = JSON.stringify(data);
+    
     clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(data));
+            client.send(message, (error) => {
+                if (error) {
+                    console.error('Error sending message to client:', error);
+                    clients.delete(client);
+                }
+            });
+        } else {
+            clients.delete(client);
         }
     });
 };
@@ -376,7 +413,7 @@ app.post('/fix-winners', requireAdmin, async (req, res) => {
             }
         }
 
-        // Broadcast update to all clients
+        // Get updated users list
         const users = await User1.find(
             { isAdmin: false },
             {
@@ -392,21 +429,29 @@ app.post('/fix-winners', requireAdmin, async (req, res) => {
 
         const totalCount = await User1.countDocuments({ isAdmin: false });
         
+        // Broadcast update to all clients
         broadcastUpdate({
             type: 'users_update',
             users,
             totalCount
         });
 
-        // Delete all non-admin users only from the first database after a short delay
+        // Wait for 5 seconds before deleting data to ensure all clients receive the update
         setTimeout(async () => {
             try {
                 await User1.deleteMany({ isAdmin: false });
                 console.log('All non-admin users deleted from first database after winner declaration');
+                
+                // Broadcast empty update after deletion
+                broadcastUpdate({
+                    type: 'users_update',
+                    users: [],
+                    totalCount: 0
+                });
             } catch (error) {
                 console.error('Error deleting users after winner declaration:', error);
             }
-        }, 1000);
+        }, 5000);
 
         res.json({
             success: true,
