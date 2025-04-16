@@ -656,12 +656,18 @@
                     const data = JSON.parse(event.data);
                     if (data.type === 'users_update') {
                         console.log('Received users update:', data);
+                        
                         // Update UI immediately
                         updateUsersList(data.users, data.totalCount);
                         
-                        // If this is an empty update (after deletion), show the popup
-                        if (data.users.length === 0 && data.totalCount === 0) {
+                        // Only show popup if this is after deletion and not initial load
+                        if (data.isAfterDeletion && !data.isInitialLoad && allUsers.length > 0) {
                             document.getElementById('winnerPopup').style.display = 'flex';
+                        }
+                        
+                        // Hide popup if this is initial load or we have users
+                        if (data.isInitialLoad || data.users.length > 0) {
+                            document.getElementById('winnerPopup').style.display = 'none';
                         }
                     }
                 } catch (error) {
@@ -855,16 +861,23 @@
             try {
                 const response = await fetch('/users/data');
                 const data = await response.json();
+                if (data.users && data.users.length === 0 && !isFirstLoad) {
+                    // Only show popup if this is not the first load and we have no users
+                    document.getElementById('winnerPopup').style.display = 'none';
+                }
                 updateUsersList(data.users, data.totalCount);
             } catch (error) {
                 console.error('Error loading users:', error);
             }
         }
 
+        let isFirstLoad = true;
         // Connect WebSocket when page loads
         document.addEventListener('DOMContentLoaded', function() {
             connectWebSocket();
-            loadUsers();
+            loadUsers().then(() => {
+                isFirstLoad = false;
+            });
         });
 
         // Check if user is admin

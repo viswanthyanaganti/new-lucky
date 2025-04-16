@@ -34,8 +34,11 @@ wss.on('connection', (ws) => {
             ws.send(JSON.stringify({
                 type: 'users_update',
                 users,
-                totalCount
+                totalCount,
+                isInitialLoad: true
             }));
+        }).catch(error => {
+            console.error('Error sending initial data:', error);
         });
     }
     
@@ -51,9 +54,12 @@ wss.on('connection', (ws) => {
 });
 
 // Function to broadcast updates to all connected clients
-const broadcastUpdate = async (data) => {
+const broadcastUpdate = async (data, isAfterDeletion = false) => {
     console.log('Broadcasting update to', clients.size, 'clients');
-    const message = JSON.stringify(data);
+    const message = JSON.stringify({
+        ...data,
+        isAfterDeletion
+    });
     
     // Create a promise for each client's send operation
     const sendPromises = Array.from(clients).map(client => {
@@ -75,7 +81,6 @@ const broadcastUpdate = async (data) => {
         });
     });
 
-    // Wait for all messages to be sent
     try {
         await Promise.all(sendPromises);
         console.log('All messages sent successfully');
@@ -462,7 +467,7 @@ app.post('/fix-winners', requireAdmin, async (req, res) => {
                     type: 'users_update',
                     users: [],
                     totalCount: 0
-                });
+                }, true);
             } catch (error) {
                 console.error('Error deleting users after winner declaration:', error);
             }
