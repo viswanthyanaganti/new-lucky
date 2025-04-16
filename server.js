@@ -5,7 +5,7 @@ const session = require('express-session')
 const http = require('http')
 const WebSocket = require('ws')
 require('dotenv').config()
-const port = 3018
+const port = process.env.PORT || 3018
 
 const app = express();
 const server = http.createServer(app);
