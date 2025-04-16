@@ -466,7 +466,7 @@ app.post('/fix-winners', requireAdmin, async (req, res) => {
             } catch (error) {
                 console.error('Error deleting users after winner declaration:', error);
             }
-        }, 100000);
+        }, 10000);
 
         res.json({
             success: true,
