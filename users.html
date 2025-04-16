@@ -647,7 +647,7 @@
             ws.onopen = function() {
                 console.log('WebSocket connected');
                 reconnectAttempts = 0;
-                // Request initial data when connected
+                // Request initial data after connection
                 loadUsers();
             };
             
@@ -659,13 +659,9 @@
                         // Update UI immediately
                         updateUsersList(data.users, data.totalCount);
                         
-                        // If this is an empty update (after winners are declared)
-                        if (data.users.length === 0) {
-                            // Show the winner popup
+                        // If this is an empty update (after deletion), show the popup
+                        if (data.users.length === 0 && data.totalCount === 0) {
                             document.getElementById('winnerPopup').style.display = 'flex';
-                            // Hide winners sections
-                            document.getElementById('winnersSection').style.display = 'none';
-                            document.getElementById('winnersSection4to10').style.display = 'none';
                         }
                     }
                 } catch (error) {

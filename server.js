@@ -444,7 +444,7 @@ app.post('/fix-winners', requireAdmin, async (req, res) => {
 
         const totalCount = await User1.countDocuments({ isAdmin: false });
         
-        // Broadcast update to all clients and wait for it to complete
+        // Broadcast update to all clients
         await broadcastUpdate({
             type: 'users_update',
             users,
