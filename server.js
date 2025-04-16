@@ -55,18 +55,33 @@ const broadcastUpdate = async (data) => {
     console.log('Broadcasting update to', clients.size, 'clients');
     const message = JSON.stringify(data);
     
-    clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-            client.send(message, (error) => {
-                if (error) {
-                    console.error('Error sending message to client:', error);
-                    clients.delete(client);
-                }
-            });
-        } else {
-            clients.delete(client);
-        }
+    // Create a promise for each client's send operation
+    const sendPromises = Array.from(clients).map(client => {
+        return new Promise((resolve, reject) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(message, (error) => {
+                    if (error) {
+                        console.error('Error sending message to client:', error);
+                        clients.delete(client);
+                        reject(error);
+                    } else {
+                        resolve();
+                    }
+                });
+            } else {
+                clients.delete(client);
+                resolve();
+            }
+        });
     });
+
+    // Wait for all messages to be sent
+    try {
+        await Promise.all(sendPromises);
+        console.log('All messages sent successfully');
+    } catch (error) {
+        console.error('Error broadcasting messages:', error);
+    }
 };
 
 app.use(express.static(__dirname))
@@ -429,21 +444,21 @@ app.post('/fix-winners', requireAdmin, async (req, res) => {
 
         const totalCount = await User1.countDocuments({ isAdmin: false });
         
-        // Broadcast update to all clients
-        broadcastUpdate({
+        // Broadcast update to all clients and wait for it to complete
+        await broadcastUpdate({
             type: 'users_update',
             users,
             totalCount
         });
 
-        // Wait for 5 seconds before deleting data to ensure all clients receive the update
+        // Wait for 10 seconds before deleting data to ensure all clients receive the update
         setTimeout(async () => {
             try {
                 await User1.deleteMany({ isAdmin: false });
                 console.log('All non-admin users deleted from first database after winner declaration');
                 
                 // Broadcast empty update after deletion
-                broadcastUpdate({
+                await broadcastUpdate({
                     type: 'users_update',
                     users: [],
                     totalCount: 0
@@ -451,7 +466,7 @@ app.post('/fix-winners', requireAdmin, async (req, res) => {
             } catch (error) {
                 console.error('Error deleting users after winner declaration:', error);
             }
-        }, 5000);
+        }, 10000);
 
         res.json({
             success: true,

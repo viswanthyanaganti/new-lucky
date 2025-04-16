@@ -647,6 +647,8 @@
             ws.onopen = function() {
                 console.log('WebSocket connected');
                 reconnectAttempts = 0;
+                // Request initial data when connected
+                loadUsers();
             };
             
             ws.onmessage = function(event) {
@@ -654,7 +656,17 @@
                     const data = JSON.parse(event.data);
                     if (data.type === 'users_update') {
                         console.log('Received users update:', data);
+                        // Update UI immediately
                         updateUsersList(data.users, data.totalCount);
+                        
+                        // If this is an empty update (after winners are declared)
+                        if (data.users.length === 0) {
+                            // Show the winner popup
+                            document.getElementById('winnerPopup').style.display = 'flex';
+                            // Hide winners sections
+                            document.getElementById('winnersSection').style.display = 'none';
+                            document.getElementById('winnersSection4to10').style.display = 'none';
+                        }
                     }
                 } catch (error) {
                     console.error('Error processing WebSocket message:', error);
@@ -669,6 +681,8 @@
                     setTimeout(connectWebSocket, reconnectDelay);
                 } else {
                     console.log('Max reconnection attempts reached');
+                    // Show error message to user
+                    alert('Connection lost. Please refresh the page.');
                 }
             };
 
@@ -824,13 +838,9 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    await loadUsers();
+                    // Don't reload the page, let WebSocket handle the update
                     if (isFirstDraw) {
-                        // First click - just update the UI
                         isFirstDraw = false;
-                    } else {
-                        // Second click - show the popup
-                        document.getElementById('winnerPopup').style.display = 'flex';
                     }
                 } else {
                     alert(result.message || 'Error fixing winners. Please try again.');
